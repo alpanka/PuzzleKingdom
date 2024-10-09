@@ -13,7 +13,10 @@ var grid_size: int = 64
 ## Positioning objects
 var mouse_position: Vector2		# Mouse global position
 var grid_position: Vector2		# Mouse grid based position
-var hovered_gridcell: Vector2
+var hovered_gridcell: Vector2	# Highlight center position
+
+## Data containers
+var occupied_tiles: Dictionary = {}
 
 
 #region built in functions
@@ -33,8 +36,10 @@ func _process(delta: float) -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("LMB") and cursor.visible:
-		_place_building_on_mouse_pos()
-		cursor.visible = false
+		# Check if there already is a building
+		if occupied_tiles.has(_get_mouse_on_grid_pos()) == false:
+			_place_building_on_mouse_pos()
+			cursor.visible = false
 
 #endregion
 
@@ -58,6 +63,9 @@ func _place_building_on_mouse_pos() -> void:
 	var building_inst: Node2D = building_scene.instantiate()
 	building_inst.global_position = _get_mouse_on_grid_pos() * grid_size
 	add_child(building_inst)
+	
+	# Add grid_position to dict
+	occupied_tiles.get_or_add(grid_position)
 	
 	# Clear highlighted area once building is placed
 	highlight_tilemap.clear()
