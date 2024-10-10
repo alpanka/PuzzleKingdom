@@ -1,4 +1,4 @@
-extends Node2D
+extends Node
 
 ## Building cursor. Visible on building mode
 @onready var cursor: Sprite2D = $Cursor
@@ -13,10 +13,10 @@ var grid_size: int = 64
 ## Positioning objects
 var mouse_position: Vector2		# Mouse global position
 var grid_position: Vector2		# Mouse grid based position
-var hovered_gridcell: Vector2	# Highlight center position
+var hovered_gridcell: Vector2	# Highlighted center position
 
 ## Data containers
-var occupied_tiles: Dictionary = {}
+var occupied_tiles: Dictionary = {} # Hashset. Stores occupied cells' coord.
 
 
 #region built in functions
@@ -35,11 +35,13 @@ func _process(delta: float) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("LMB") and cursor.visible:
-		# Check if there already is a building
-		if occupied_tiles.has(_get_mouse_on_grid_pos()) == false:
-			_place_building_on_mouse_pos()
-			cursor.visible = false
+	if event.is_action_pressed("LMB"):
+		# Check if highlight pos has value
+		if hovered_gridcell != null:
+			# Check if there already is a building
+			if occupied_tiles.has(hovered_gridcell) == false:
+				_place_builging_at_hovered_cell()
+				cursor.visible = false
 
 #endregion
 
@@ -53,19 +55,22 @@ func _initialize_main_scene():
 ## Get mouse position snapped on grid.
 ## Need to multiply by grid_size
 func _get_mouse_on_grid_pos() -> Vector2:
-	mouse_position = get_global_mouse_position()
+	mouse_position = highlight_tilemap.get_global_mouse_position()
 	grid_position = floor(mouse_position / grid_size)
 	return grid_position
 
 
 ## Place a building instance on mouse position
-func _place_building_on_mouse_pos() -> void:
+func _place_builging_at_hovered_cell() -> void:
+	if hovered_gridcell == null:
+		return
+	
 	var building_inst: Node2D = building_scene.instantiate()
-	building_inst.global_position = _get_mouse_on_grid_pos() * grid_size
+	building_inst.global_position = hovered_gridcell * grid_size
 	add_child(building_inst)
 	
 	# Add grid_position to dict
-	occupied_tiles.get_or_add(grid_position)
+	occupied_tiles.get_or_add(hovered_gridcell)
 	
 	# Clear highlighted area once building is placed
 	highlight_tilemap.clear()
