@@ -19,6 +19,7 @@ config/icon="res://icon.svg"
 [autoload]
 
 Stats="*res://globals/stats.gd"
+Names="*res://globals/names.gd"
 
 [display]
 

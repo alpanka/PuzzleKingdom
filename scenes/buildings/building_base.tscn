@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=3 uid="uid://ticwfp0c40px"]
+
+[ext_resource type="Script" path="res://modules/components/building_component.gd" id="1_xqbw6"]
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_rvmkt"]
+size = Vector2(64, 64)
+
+[node name="BuildingBase" type="Node2D"]
+
+[node name="BuildingComponent" type="Node2D" parent="."]
+script = ExtResource("1_xqbw6")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = SubResource("PlaceholderTexture2D_rvmkt")
+centered = false

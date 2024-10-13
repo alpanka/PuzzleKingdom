@@ -13,10 +13,26 @@ var grid_position: Vector2i		# Mouse grid based position
 var occupied_tiles: Dictionary = {} # Hashset. Stores occupied cells' coord.
 
 
-## Sets highlight area with defined radi on valid tiles
-func highlight_valid_cells(origin: Vector2i, radius: int) -> void:
-	# Clear before you draw
-	highlight_tilemap.clear()
+## Highlight around each "BuildingComponent"
+## Based on their "pos" and "radi"
+func highlight_buildable_tiles() -> void:
+	# Clear highlight tilemap
+	clear_tilemap(highlight_tilemap)
+	
+	# Get all "BuildingComponent" from group
+	var building_components\
+		= get_tree().get_nodes_in_group(Names.group_building_component)\
+		as Array[BuildingComponent]
+	
+	for component in building_components:
+		var area_origin: Vector2i = component.get_grid_cell_pos()
+		var area_radi: int = component.buildable_radi
+		
+		_highlight_valid_cells(area_origin, area_radi)
+	
+
+## Set highlight are based on "origin" with given "radi"
+func _highlight_valid_cells(origin: Vector2i, radius: int) -> void:
 	
 	# Iterate on X and Y up to radius value
 	for i in range(origin.x - radius, origin.x + radius + 1):
@@ -55,3 +71,8 @@ func is_tile_available(tile_pos: Vector2i) -> bool:
 	if tile_data.get_custom_data("buildable") == false: return false
 	# False, if coord in occupied_tiles
 	return not occupied_tiles.has(tile_pos)
+
+
+# Clears the "tilemap_layer"
+func clear_tilemap(tilemap_layer: TileMapLayer) -> void:
+	tilemap_layer.clear()
