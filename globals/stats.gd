@@ -1,4 +1,6 @@
 extends Node
 
-
-grid_size: Vector2 = Vector2(64, 64)
+## Tilemap base grid size
+var grid_size: int = 64
+## Highlight radius
+var radi: int = 3

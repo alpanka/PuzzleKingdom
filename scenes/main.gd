@@ -11,9 +11,7 @@ extends Node
 var building_scene: PackedScene = preload("res://scenes/buildings/building.tscn")
 
 ## Positioning objects
-var hovered_gridcell: Vector2	# Highlighted center position
-var grid_size: int = 64
-
+var hovered_gridcell: Vector2i	# Highlighted center position
 
 
 #region built in functions
@@ -23,12 +21,12 @@ func _ready() -> void:
 
 func _process(_delta: float) -> void:
 	grid_manager.get_mouse_on_grid_pos()
-	cursor.global_position = grid_manager.grid_position * grid_size
+	cursor.global_position = grid_manager.grid_position * Stats.grid_size
 	
 	if cursor.visible:
 		if hovered_gridcell == null or hovered_gridcell != grid_manager.grid_position:
 			hovered_gridcell = grid_manager.grid_position
-			grid_manager.highlight_valid_cells(hovered_gridcell, 3)
+			grid_manager.highlight_valid_cells(hovered_gridcell, Stats.radi)
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -55,7 +53,7 @@ func _place_builging_at_hovered_cell() -> void:
 		return
 	
 	var building_inst: Node2D = building_scene.instantiate()
-	building_inst.global_position = hovered_gridcell * grid_size
+	building_inst.global_position = hovered_gridcell * Stats.grid_size
 	add_child(building_inst)
 	
 	# Add grid_position to dict
